@@ -2,20 +2,19 @@ const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
 const signUp = sequelize.define('newUser', {
-    email: {
-        type: Sequelize.STRING,
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    userName: {
+    userName: Sequelize.STRING,
+    email: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true
     },
-    password: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        defaultValue: null
-    }
+    password: Sequelize.STRING,
 });
 
 module.exports = signUp;
