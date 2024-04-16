@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>expense</title>
+</head>
+
+<body>
+    <form onsubmit="expense(event)">
+
+        <label for=" amount">Amount</label>
+        <input type="number" name="amount" id="">
+
+        <label for="description">Description</label>
+        <input type="text" name="description" id="">
+
+        <label for="category"></label>
+        <select name="category" id="">category:
+            <option value="Fuel">Fuel</option>
+            <option value="MakeUp">MakeUp</option>
+            <option value="Education">Education</option>
+            <option value="Restaurant">Restaurant</option>
+        </select>
+
+        <button type="submit">Add</button>
+
+    </form>
+
+    <ul id="posts"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
