@@ -1,5 +1,7 @@
 const Post = require('../models/users');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 
 function isStringValidOrNot(string) {
     return string === undefined || string.length === 0;
@@ -8,7 +10,7 @@ function isStringValidOrNot(string) {
 exports.NewUserSignUp = async (req, res, next) => {
     try {
         const { userName, email, password } = req.body;
-        console.log("email", email);
+        // console.log("email", email);
 
         if (isStringValidOrNot(userName) ||
             isStringValidOrNot(email ||
@@ -37,6 +39,10 @@ exports.NewUserSignUp = async (req, res, next) => {
 };
 
 //login
+
+function genrateAccessSecretToken(id) {
+    return jwt.sign({ userId: id }, "#@focus28ABCDabcd")
+}
 exports.existingUserLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -51,7 +57,7 @@ exports.existingUserLogin = async (req, res, next) => {
             if (result) {
                 console.log("Password matches!");
                 // You can handle successful login here
-                return res.status(200).json({ message: 'Login successful', success: true });
+                return res.status(200).json({ message: 'Login successful', success: true, token: genrateAccessSecretToken(user[0].id) });
             } else {
                 console.log("Invalid password!");
                 return res.status(401).json({ message: 'Invalid password', success: false });

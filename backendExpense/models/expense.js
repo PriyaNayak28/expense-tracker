@@ -17,7 +17,5 @@ const Expense = sequelize.define('expenses', {
     },
 });
 
-// Define association between User and Expense
-Expense.belongsTo(User); // This will add userId as a foreign key in the Expense table
 
 module.exports = Expense;

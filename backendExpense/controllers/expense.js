@@ -1,15 +1,11 @@
+const path = require('path');
 
 const userExpense = require('../models/expense');
 
-exports.getAddExpensePage = (req, res, next) => {
-    const filePath = path.join(__dirname, '../expense.html');
-    res.sendFile(filePath);
-}
-
 exports.getAllExpense = async (req, res, next) => {
     try {
-        const posts = await userExpense.findAll();
-        console.log(posts);
+        const posts = await userExpense.findAll({ userId: req.user.id });
+        //console.log(posts);
         res.json(posts);
     } catch (error) {
         console.error('Error fetching posts:', error.message);
@@ -27,7 +23,7 @@ exports.postExpense = async (req, res, next) => {
             description,
             category
         });
-        console.log(user);
+        // console.log(user);
 
         res.json(user);
     } catch (error) {
