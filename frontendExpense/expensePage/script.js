@@ -1,3 +1,5 @@
+
+
 async function expense(event) {
     try {
         event.preventDefault();
@@ -5,11 +7,15 @@ async function expense(event) {
         let amount = event.target.amount.value;
         let description = event.target.description.value;
         let category = event.target.category.value;
+        let id = event.target.id;
+        console.log(id);
+
 
         let post = {
             amount,
             description,
-            category
+            category,
+            id
         };
 
         console.log("post", post)
@@ -32,8 +38,9 @@ async function expense(event) {
 
 window.addEventListener("DOMContentLoaded", async () => {
     try {
-        const response = await axios.get("http://localhost:3000/usersExpense/expense");
-        console.log(response);
+        const token = localStorage.getItem('token');
+        const response = await axios.get("http://localhost:3000/usersExpenses/expense", { headers: { 'Authorization': token } });
+        console.log("expense response", response);
 
         for (var i = 0; i < response.data.length; i++) {
             uploadPost(response.data[i]);
@@ -49,6 +56,5 @@ async function uploadPost(post) {
     childElement.classList.add('post'); // Added class for styling
 
     childElement.innerHTML = `amount: ${post.amount} |Description: ${post.description} | category: ${post.category} <button id="delete">Delete</button>`;
-    console.log(childElement);
     parentElement.appendChild(childElement);
 }

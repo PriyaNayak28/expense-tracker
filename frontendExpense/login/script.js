@@ -9,11 +9,14 @@ async function signIn(event) {
         const response = await axios.post('http://localhost:3000/users/login', loginInfo);
 
         if (response.status == 200) {
-            alert("User successfully logged in");
+            alert(response.data.message);
+            console.log(response.data.message);
+            localStorage.setItem('token', response.data.token)
             window.location.href = '../expensePage/expense.html'
         }
     } catch (err) {
-        console.error('Error during login:', err);
+        console.log(JSON.stringify(err))
+        document.body.innerHTML += `<div style="color:red;">${err.message}</div>`
 
     }
 }
