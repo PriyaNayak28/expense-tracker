@@ -41,7 +41,7 @@ exports.NewUserSignUp = async (req, res, next) => {
 //login
 
 function genrateAccessSecretToken(id) {
-    return jwt.sign({ userId: id }, "#@focus28ABCDabcd")
+    return jwt.sign({ newUserId: id }, "#@focus28ABCDabcd")
 }
 exports.existingUserLogin = async (req, res, next) => {
     try {
@@ -57,7 +57,7 @@ exports.existingUserLogin = async (req, res, next) => {
             if (result) {
                 console.log("Password matches!");
                 // You can handle successful login here
-                return res.status(200).json({ message: 'Login successful', success: true, token: genrateAccessSecretToken(user[0].id) });
+                return res.status(200).json({ message: 'Login successful', success: true, token: genrateAccessSecretToken(user[0].id), id: user[0].id });
             } else {
                 console.log("Invalid password!");
                 return res.status(401).json({ message: 'Invalid password', success: false });
@@ -70,3 +70,5 @@ exports.existingUserLogin = async (req, res, next) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+
