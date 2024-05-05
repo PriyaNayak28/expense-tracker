@@ -8,8 +8,8 @@ body {
     padding: 0;
 }
 
-.signup-container {
-    max-width: 400px;
+.container {
+    max-width: 600px;
     margin: 50px auto;
     padding: 20px;
     border: 1px solid #cccccc;
@@ -18,28 +18,33 @@ body {
     /* White background */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     /* Soft shadow */
-    text-align: center;
 }
 
-.signup-form h2 {
-    margin-bottom: 20px;
+h1 {
+    text-align: center;
     color: #4169e1;
     /* Sky blue color */
 }
 
-.signup-form input {
+.expense-form label {
+    display: block;
+    margin-top: 10px;
+}
+
+.expense-form input,
+.expense-form select {
     width: 100%;
     padding: 10px;
-    margin-top: 10px;
+    margin-top: 5px;
     border: 1px solid #cccccc;
     border-radius: 5px;
     box-sizing: border-box;
 }
 
-.signup-form button {
+.expense-form button {
     width: 100%;
     padding: 10px;
-    margin-top: 20px;
+    margin-top: 10px;
     background-color: #4169e1;
     /* Sky blue color */
     color: #ffffff;
@@ -50,7 +55,21 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.signup-form button:hover {
+.expense-form button:hover {
     background-color: #003366;
     /* Darker shade of blue on hover */
+}
+
+#posts {
+    list-style-type: none;
+    padding: 0;
+}
+
+#posts li {
+    border-bottom: 1px solid #cccccc;
+    padding: 10px 0;
+}
+
+#posts li:last-child {
+    border-bottom: none;
 }

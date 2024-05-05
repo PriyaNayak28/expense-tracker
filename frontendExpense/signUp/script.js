@@ -11,10 +11,10 @@ async function signUp(event) {
             email,
             password
         }
-        console.log(signUpinfo);
+        // console.log(signUpinfo);
 
-        const response = await axios.post('http://localhost:3000/users/signUp', signUpinfo);
-        console.log(response);
+        const response = await axios.post('http://localhost:4000/users/signUp', signUpinfo);
+        //console.log(response);
         if (response.status === 201) {
             window.location.href = '../login/login.html';
         }
@@ -23,3 +23,6 @@ async function signUp(event) {
     }
 }
 
+// TOKEN_SECRET = '#@focus28ABCDabcd';
+// RAZORPAY_KEY_ID = 'rzp_test_z62yGE79KvVln8';
+// RAZORPAY_KEY_SECRET = 'Z9sVpXOIUjD9ZJIWB7nZrcyZ';
