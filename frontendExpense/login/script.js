@@ -6,7 +6,7 @@ async function signIn(event) {
         const password = event.target.password.value;
         const loginInfo = { email, password };
 
-        const response = await axios.post('http://localhost:4000/users/login', loginInfo);
+        const response = await axios.post('http://localhost:3000/users/login', loginInfo);
         //  console.log("id", response.data);
         if (response.status == 200) {
             alert(response.data.message);
