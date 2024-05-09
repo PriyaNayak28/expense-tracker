@@ -78,15 +78,37 @@ function removeExpense(expenseId) {
     }
 }
 
+function showuserIspremiumOrNot() {
+    document.getElementById('rzp-button1').style.visibility = 'hidden';
+    document.getElementById('message').innerHTML = 'you are premium user'
+}
+
+// decode the logged in user
+function parseJwt(token) {
+    if (!token) {
+        return;
+    }
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace("-", "+").replace("_", "/");
+    return JSON.parse(window.atob(base64));
+}
+
 document.getElementById('rzp-button1').onclick = async function (e) {
     try {
-        console.log("premiumuser");
+        console.log("@premiumuser");
         e.preventDefault();
 
         const token = localStorage.getItem('token');
-        console.log("Etoken", token);
+        const decode = parseJwt(token);
+        console.log("decode", decode);
+        const adminIs = decode.ispremiumuser
+        if (adminIs) {
+            showuserIspremiumOrNot();
+        }
+        console.log("@Etoken", token);
         const response = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: { 'Authorization': token } });
-        console.log("Eresponse", response.data);
+        console.log("@Eresponse", response);
+        console.log("@Eresponse", response.data);
 
         let options = {
             "key": response.data.key_id,
@@ -98,10 +120,17 @@ document.getElementById('rzp-button1').onclick = async function (e) {
                     payment_id: response.razorpay_payment_id,
                 }, { headers: { "Authorization": token } });
                 alert('You are a premium user now');
-                body.innerHTML = 'you are premium user '
+                // Block the button
+                document.getElementById('rzp-button1').style.visibility = 'hidden';
+                document.getElementById('message').innerHTML = 'you are premium user'
+                //  localStorage.setItem('admin', true);
+
+
             },
         };
-        console.log("Eoptions", response.data.order.id);
+
+
+        console.log("@Eoptions", options);
 
         const rzp1 = new Razorpay(options);
         rzp1.open();
