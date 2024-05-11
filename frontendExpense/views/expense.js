@@ -1,4 +1,13 @@
 
+
+function parseJwt(token) {
+    if (!token) {
+        return;
+    }
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace("-", "+").replace("_", "/");
+    return JSON.parse(window.atob(base64));
+}
 async function expense(event) {
     try {
         event.preventDefault();
@@ -14,7 +23,7 @@ async function expense(event) {
         };
 
         const token = localStorage.getItem('token');
-        const response = await axios.post("http://localhost:3000/usersExpenses/add", post, { headers: { 'Authorization': token } });
+        const response = await axios.post("http://localhost:3000/usersExpenses/addExpense", post, { headers: { 'Authorization': token } });
 
         uploadPost(response.data);
 
@@ -31,8 +40,15 @@ async function expense(event) {
 window.addEventListener("DOMContentLoaded", async () => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get("http://localhost:3000/usersExpenses/expense", { headers: { 'Authorization': token } });
+        const response = await axios.get("http://localhost:3000/usersExpenses/getExpense", { headers: { 'Authorization': token } });
         console.log("expense response", response)
+        const decode = parseJwt(token);
+        console.log("decode", decode);
+        const adminIs = decode.ispremiumuser
+        console.log(adminIs);
+        if (adminIs) {
+            showuserIspremiumOrNot();
+        }
 
         for (let i = 0; i < response.data.length; i++) {
             uploadPost(response.data[i]);
@@ -43,18 +59,18 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-async function uploadPost(post) {
-    const parentElement = document.getElementById('posts');
+
+async function uploadPost(expense) {
+    const parentElement = document.getElementById('userExpenses');
     const childElement = document.createElement('li');
-    childElement.classList.add('post');
-    childElement.id = `expense-${post.id}`;
+    childElement.classList.add('expense');
+    childElement.id = `expense-${expense.id}`;
 
-
-    childElement.innerHTML = `amount: ${post.amount} | Description: ${post.description} | category: ${post.category} 
-     <form onsubmit="deleteExpense(event, '${post.id}')"><button type="submit">Delete</button></form> `;
+    childElement.innerHTML = `amount: ${expense.amount} | Description: ${expense.description} | category: ${expense.category} 
+     <form onsubmit="deleteExpense(event, '${expense.id}')"><button type="submit">Delete</button></form> `;
     parentElement.appendChild(childElement);
 }
-//<button class='delete' onclick=deleteExpense(event,'${post.id}')>Delete</button>
+
 async function deleteExpense(event, expenseId) {
     try {
         event.preventDefault(); // Prevent form submission
@@ -82,17 +98,17 @@ function showuserIspremiumOrNot() {
     document.getElementById('rzp-button1').style.visibility = 'hidden';
     document.getElementById('message').innerHTML = 'you are premium user'
 }
-
-// decode the logged in user
-function parseJwt(token) {
-    if (!token) {
-        return;
-    }
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace("-", "+").replace("_", "/");
-    return JSON.parse(window.atob(base64));
-}
-
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//     decode the logged in user
+// function parseJwt(token) {
+//     if (!token) {
+//         return;
+//     }
+//     const base64Url = token.split(".")[1];
+//     const base64 = base64Url.replace("-", "+").replace("_", "/");
+//     return JSON.parse(window.atob(base64));
+// }
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 document.getElementById('rzp-button1').onclick = async function (e) {
     try {
         console.log("@premiumuser");
@@ -102,6 +118,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
         const decode = parseJwt(token);
         console.log("decode", decode);
         const adminIs = decode.ispremiumuser
+        console.log(adminIs);
         if (adminIs) {
             showuserIspremiumOrNot();
         }
@@ -109,7 +126,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
         const response = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: { 'Authorization': token } });
         console.log("@Eresponse", response);
         console.log("@Eresponse", response.data);
-
+        localStorage.setItem('token', response.data.token);
         let options = {
             "key": response.data.key_id,
             "order_id": response.data.order.id,
@@ -120,10 +137,11 @@ document.getElementById('rzp-button1').onclick = async function (e) {
                     payment_id: response.razorpay_payment_id,
                 }, { headers: { "Authorization": token } });
                 alert('You are a premium user now');
+                console.log(response);
                 // Block the button
                 document.getElementById('rzp-button1').style.visibility = 'hidden';
                 document.getElementById('message').innerHTML = 'you are premium user'
-                //  localStorage.setItem('admin', true);
+                // localStorage.setItem('token', response.data.token);
 
 
             },
@@ -145,3 +163,5 @@ document.getElementById('rzp-button1').onclick = async function (e) {
         document.body.innerHTML = `<div>${err}</div>`;
     }
 }
+
+

@@ -13,7 +13,7 @@ async function signIn(event) {
             //  console.log("id", response.data.message);
             // console.log(response.data.token)
             localStorage.setItem('token', response.data.token)
-            window.location.href = '../expensePage/expense.html'
+            window.location.href = '../views/expense.html'
         }
     } catch (err) {
         console.log(JSON.stringify(err))

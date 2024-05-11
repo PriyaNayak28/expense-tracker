@@ -16,7 +16,7 @@ async function signUp(event) {
         const response = await axios.post('http://localhost:3000/users/signUp', signUpinfo);
         //console.log(response);
         if (response.status === 201) {
-            window.location.href = '../login/login.html';
+            window.location.href = '../views/login.html';
         }
     } catch (err) {
         console.error('Error during sign up:', err);
