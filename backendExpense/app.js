@@ -1,33 +1,34 @@
 
 require('dotenv').config();
 const path = require('path');
+const cors = require('cors');
 const express = require('express');
-const bodyParser = require('body-parser');
-const sequelize = require('./util/database');
-const signUpRoutes = require('./routes/users');
-const authenticate = require('./middleware/auth');
-const expenseRoutes = require('./routes/expense');
-const purchase = require('./routes/purchase');
 const app = express();
-var cors = require('cors');
-const Expense = require('./models/expense');
-const signUp = require('./models/users');
-const user = require('./models/users');
-const Order = require('./models/orders');
+const bodyParser = require('body-parser');
+
+const sequelize = require('./util/database');
+
+const usersRoutes = require('./routes/users');
+const expenseRoutes = require('./routes/expense');
+const purchaseRoutes = require('./routes/purchase');
+
+const userModel = require('./models/usersM');
+const expenseModel = require('./models/expensesM');
+const orderModel = require('./models/ordersM');
+
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json({ extended: false }));
-app.use('/users', signUpRoutes);
-//app.use(authenticate);
+
+app.use('/users', usersRoutes);
 app.use('/usersExpenses', expenseRoutes);
-app.use('/purchase', purchase);
-user.hasMany(Expense);
-Expense.belongsTo(user);
+app.use('/purchase', purchaseRoutes);
 
-user.hasMany(Order);
-Order.belongsTo(user);
+userModel.hasMany(expenseModel);
+expenseModel.belongsTo(userModel);
 
-
+userModel.hasMany(orderModel);
+orderModel.belongsTo(userModel);
 
 sequelize.sync()
     .then(result => {

@@ -1,4 +1,4 @@
-const Post = require('../models/users');
+const User = require('../models/usersM');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -7,10 +7,10 @@ function isStringValidOrNot(string) {
     return string === undefined || string.length === 0;
 }
 
-exports.NewUserSignUp = async (req, res, next) => {
+// signUp controller
+const signUp = async (req, res, next) => {
     try {
         const { userName, email, password } = req.body;
-        // console.log("email", email);
 
         if (isStringValidOrNot(userName) ||
             isStringValidOrNot(email ||
@@ -18,19 +18,19 @@ exports.NewUserSignUp = async (req, res, next) => {
             return res.status(400).json({ err: "something is missing" })
         }
 
-        const existingUser = await Post.findOne({ where: { email } });
+        const existingUser = await User.findOne({ where: { email } });
 
         if (existingUser) {
-            return res.status(400).json({ error: "Email already exists" });
+            return res.status(400).json({ message: "Email already exists" });
         }
 
         const saltRounds = 10;
         bcrypt.hash(password, saltRounds, async (err, hash) => {
             console.log(err);
-            await Post.create({ userName, email, password: hash });
+            await User.create({ userName, email, password: hash });
         })
 
-        res.status(201).json(Post);
+        res.status(201).json(User);
     }
     catch (error) {
         console.error('Error uploading post:', error.message);
@@ -38,19 +38,19 @@ exports.NewUserSignUp = async (req, res, next) => {
     }
 };
 
-//login
 
+// login controller
 function genrateAccessSecretToken(id, userName, ispremiumuser) {
     return jwt.sign({ newUserId: id, userName: userName, ispremiumuser }, "#@focus28ABCDabcd")
 }
-exports.existingUserLogin = async (req, res, next) => {
+const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (isStringValidOrNot(email) || isStringValidOrNot(password)) {
             return res.status(400).json({ message: 'Email id or password is missing', success: false });
         }
 
-        const user = await Post.findAll({ where: { email } });
+        const user = await User.findAll({ where: { email } });
         if (user.length > 0) {
             const hash = user[0].password;
             const result = await bcrypt.compare(password, hash);
@@ -71,4 +71,5 @@ exports.existingUserLogin = async (req, res, next) => {
     }
 }
 
+module.exports = { signUp, login, genrateAccessSecretToken: genrateAccessSecretToken };
 

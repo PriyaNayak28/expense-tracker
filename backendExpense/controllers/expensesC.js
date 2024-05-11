@@ -1,24 +1,19 @@
 const path = require('path');
+const Expense = require('../models/expensesM');
+const User = require('../models/usersM');
 
-const userExpense = require('../models/expense');
-const users = require('../models/users');
-
-
-exports.postExpense = async (req, res, next) => {
+// expense post controller
+exports.addExpense = async (req, res) => {
+    console.log("expense controller addExpense");
     const { amount, description, category } = req.body;
-    // console.log("id has", req.user.id);
     try {
-        const user = await userExpense.create({
+        const addExpense = await Expense.create({
             amount,
             description,
             category,
             newUserId: req.user.id
-
-
         });
-        // console.log("this is user", user);
-
-        res.json(user);
+        res.status(201).json({ message: "addExpense successfully" }, addExpense);
     } catch (error) {
         console.error('Error uploading post:', error.message);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -26,12 +21,12 @@ exports.postExpense = async (req, res, next) => {
 
 }
 
-exports.getAllExpense = async (req, res, next) => {
+// expense get controller
+exports.getExpense = async (req, res) => {
+    console.log("expense controller getExpense");
     try {
-        // console.log(req.user.id)
-        const posts = await userExpense.findAll({ where: { newUserId: req.user.id } });
-        // console.log("this is post", posts);
-        res.json(posts);
+        const getExpenses = await Expense.findAll({ where: { newUserId: req.user.id } });
+        res.json(getExpenses);
     } catch (error) {
         console.error('Error fetching posts:', error.message);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -39,33 +34,29 @@ exports.getAllExpense = async (req, res, next) => {
 
 }
 
+// expense delete controller
 exports.deleteExpense = async (req, res) => {
+    console.log("expense controller deleteExpense");
     try {
-        const expenseId = req.params.expenseId // Assuming expenseId is passed as a parameter in the URL
-        console.log("delteexpenseId", expenseId);
+        const expenseId = req.params.expenseId
         if (!expenseId) {
             return res.status(400).json({ error: 'Expense ID is required' });
         }
-
-        // Assuming userExpense is your Sequelize model for expenses
-        const deletedExpense = await userExpense.destroy({
+        const deleteExpense = await Expense.destroy({
             where: {
                 id: expenseId,
                 newUserId: req.user.id,
-                // Add user ID constraint to ensure only the user's own expenses are deleted
             }
-
         });
-
-        if (!deletedExpense) {
+        if (!deleteExpense) {
             return res.status(404).json({ error: 'Expense not found' });
         }
-
         res.status(200).json({ message: 'Expense deleted successfully' });
     } catch (error) {
         console.error('Error deleting expense:', error.message);
         res.status(500).json({ error: 'Internal Server Error' });
     }
+
 }
 
 

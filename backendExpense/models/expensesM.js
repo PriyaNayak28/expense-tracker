@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
-const User = require('./users');
+const User = require('./usersM');
 
 const Expense = sequelize.define('expenses', {
     amount: Sequelize.FLOAT,
@@ -16,7 +16,6 @@ const Expense = sequelize.define('expenses', {
         allowNull: false,
     },
 });
-
 
 module.exports = Expense;
 

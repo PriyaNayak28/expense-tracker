@@ -1,9 +1,9 @@
 const express = require('express');
-const users = require('./users');
 const router = express.Router();
+const users = require('./users');
 
-const purchaseController = require('../controllers/purchase');
 const authenticateMiddleware = require('../middleware/auth');
+const purchaseController = require('../controllers/purchaseC');
 
 router.get('/premiummembership', authenticateMiddleware.authenticate, purchaseController.purchasepremium);
 router.post('/updatetransactionstatus', authenticateMiddleware.authenticate, purchaseController.updateTransactionStatus);
