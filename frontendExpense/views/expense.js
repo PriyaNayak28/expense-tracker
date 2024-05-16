@@ -1,5 +1,4 @@
 
-
 function parseJwt(token) {
     if (!token) {
         return;
@@ -40,6 +39,7 @@ async function expense(event) {
 window.addEventListener("DOMContentLoaded", async () => {
     try {
         const token = localStorage.getItem('token');
+        console.log("token", token);
         const response = await axios.get("http://localhost:3000/usersExpenses/getExpense", { headers: { 'Authorization': token } });
         console.log("expense response", response)
         const decode = parseJwt(token);
@@ -48,6 +48,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         console.log(adminIs);
         if (adminIs) {
             showuserIspremiumOrNot();
+            showLeaderboard()
         }
 
         for (let i = 0; i < response.data.length; i++) {
@@ -98,17 +99,28 @@ function showuserIspremiumOrNot() {
     document.getElementById('rzp-button1').style.visibility = 'hidden';
     document.getElementById('message').innerHTML = 'you are premium user'
 }
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//     decode the logged in user
-// function parseJwt(token) {
-//     if (!token) {
-//         return;
-//     }
-//     const base64Url = token.split(".")[1];
-//     const base64 = base64Url.replace("-", "+").replace("_", "/");
-//     return JSON.parse(window.atob(base64));
-// }
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+async function showLeaderboard() {
+    const inputElement = document.createElement("input")
+    inputElement.className = "leaderboardbtn"
+    inputElement.type = "button"
+    inputElement.value = 'Show Leaderboard'
+    inputElement.onclick = async () => {
+        const token = localStorage.getItem('token')
+        console.log("hh,token", token);
+        const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/showLeaderBoard', { headers: { "Authorization": token } })
+        console.log("hh,userLeaderBoardArray", userLeaderBoardArray);
+
+        var leaderboardElem = document.getElementById('leaderboard')
+        // leaderboardElem.innerHTML += '<h1> Leader Board </<h1>'
+        userLeaderBoardArray.data.forEach((userDetails) => {
+            leaderboardElem.innerHTML += `<li>Name - ${userDetails.name} Total Expense - ${userDetails.total_cost} </li>`
+        })
+    }
+    document.getElementById("message").appendChild(inputElement);
+
+}
+
 document.getElementById('rzp-button1').onclick = async function (e) {
     try {
         console.log("@premiumuser");
@@ -121,29 +133,29 @@ document.getElementById('rzp-button1').onclick = async function (e) {
         console.log(adminIs);
         if (adminIs) {
             showuserIspremiumOrNot();
+            showLeaderboard()
         }
         console.log("@Etoken", token);
         const response = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: { 'Authorization': token } });
         console.log("@Eresponse", response);
         console.log("@Eresponse", response.data);
-        localStorage.setItem('token', response.data.token);
+        // localStorage.setItem('token', response.data.token);
         let options = {
             "key": response.data.key_id,
             "order_id": response.data.order.id,
             "amount": response.data.order.amount,
             "handler": async function (response) {
-                await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+                const responseS = await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
                     order_id: options.order_id,
                     payment_id: response.razorpay_payment_id,
                 }, { headers: { "Authorization": token } });
                 alert('You are a premium user now');
-                console.log(response);
+                console.log(responseS);
                 // Block the button
                 document.getElementById('rzp-button1').style.visibility = 'hidden';
                 document.getElementById('message').innerHTML = 'you are premium user'
-                // localStorage.setItem('token', response.data.token);
-
-
+                showLeaderboard()
+                localStorage.setItem('token', responseS.data.token);
             },
         };
 

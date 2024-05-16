@@ -7,13 +7,11 @@ async function signIn(event) {
         const loginInfo = { email, password };
 
         const response = await axios.post('http://localhost:3000/users/login', loginInfo);
-        //  console.log("id", response.data);
         if (response.status == 200) {
             alert(response.data.message);
-            //  console.log("id", response.data.message);
-            // console.log(response.data.token)
+            console.log("response.data", response.data);
             localStorage.setItem('token', response.data.token)
-            window.location.href = '../views/expense.html'
+            window.location.href = './expense.html'
         }
     } catch (err) {
         console.log(JSON.stringify(err))
