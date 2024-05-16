@@ -6,15 +6,7 @@ const getUserLeaderBoard = async (req, res) => {
     try {
 
         const leaderBoardOfUsers = await User.findAll({
-            attributes: ['id', 'userName', [sequelize.fn('sum', sequelize.col('expenses.amount')), 'total_cost']],
-            include: [
-                {
-                    model: Expense,
-                    attributes: []
-                }
-            ],
-            group: ['newUser.id'],
-            order: [['total_cost', 'DESC']]
+            order: [['totalExpenses', 'DESC']]
         })
         res.status(200).json(leaderBoardOfUsers)
     }
