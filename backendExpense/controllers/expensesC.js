@@ -13,7 +13,7 @@ exports.addExpense = async (req, res) => {
             category,
             newUserId: req.user.id
         });
-        res.status(201).json({ message: "addExpense successfully" }, addExpense);
+        res.json(addExpense);
     } catch (error) {
         console.error('Error uploading post:', error.message);
         res.status(500).json({ error: 'Internal Server Error' });
